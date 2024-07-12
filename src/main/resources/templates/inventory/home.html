@@ -1,0 +1,20 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}"> <!-- layout.html 파일을 상속받음 -->
+
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/home.css}">
+    </th:block>
+
+
+    <div layout:fragment="content">
+        <div class="bg-dark text-white p-5">
+            <h1 class="text-center">재고 관리</h1>
+        </div>
+
+        
+    </div>
+
+    <th:block layout:fragment="js">
+        <script th:src="@{/js/home.js}"></script>
+    </th:block>
+</html>
