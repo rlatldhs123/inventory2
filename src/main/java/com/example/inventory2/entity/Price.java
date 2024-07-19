@@ -35,4 +35,7 @@ public class Price extends BaseEntity {
   private Long duty;
   // 운임
   private Long shippingCost;
+  // @OneToOne(mappedBy = "product")
+  // @JoinColumn(name = "product_id", nullable = false, unique = true)
+  // private Product product;
 }

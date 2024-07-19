@@ -18,7 +18,7 @@
     <header>
       <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-          <a class="navbar-brand" href="/inventory/inventory_list">재고 전부 보기</a>
+          <a class="navbar-brand" href="/inventory/product_list">상품 리스트</a>
           <button
             class="navbar-toggler"
             type="button"
@@ -33,16 +33,22 @@
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Home</a>
+                <a class="nav-link active" aria-current="page" href="/inventory/inventory_list">재고 리스트</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">제품 추가</a>
+                <a class="nav-link" href="/inventory/create_product">상품 추가</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/inventory/create_inventory">재고 입고</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/inventory/inventory_total_list">재고 통계</a>
               </li>
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"> 창고 관리 </a>
                 <ul class="dropdown-menu">
                   <li><a class="dropdown-item" href="/inventory/move_list">재고 이동</a></li>
-                  <li><a class="dropdown-item" href="#">재고 폐기</a></li>
+                  <li><a class="dropdown-item" href="/inventory/delete_inventory">재고 폐기</a></li>
                   <li><a class="dropdown-item" href="#">재고 상태 수정</a></li>
                   <li><hr class="dropdown-divider" /></li>
                   <li><a class="dropdown-item" href="#">Something else here</a></li>

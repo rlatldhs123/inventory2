@@ -1,7 +1,5 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/layout}">
-  <!-- layout.html 파일을 상속받음 -->
-
   <head>
     <meta charset="UTF-8" />
     <title>Product List</title>
@@ -12,15 +10,15 @@
         white-space: nowrap;
       }
       .table-hover tbody tr {
-        transition: all 0.3s ease; /* 트랜지션 적용 */
+        transition: all 0.3s ease;
       }
       .table-hover tbody tr:hover {
-        background-color: #d4edda !important; /* 배경색 변경 (연초록색) */
-        transform: scale(1.005); /* 확대 효과 */
-        box-shadow: 0 8px 8px rgba(5, 231, 194, 0.2); /* 그림자 효과 */
-        z-index: 1; /* 다른 행보다 앞으로 나오게 설정 */
-        position: relative; /* z-index가 적용되도록 설정 */
-        border-radius: 8px; /* 모서리 둥글게 설정 */
+        background-color: #d4edda !important;
+        transform: scale(1.005);
+        box-shadow: 0 8px 8px rgba(5, 231, 194, 0.2);
+        z-index: 1;
+        position: relative;
+        border-radius: 8px;
       }
       .container-fluid,
       .container-sm,
@@ -35,84 +33,138 @@
       }
     </style>
   </head>
-
   <body>
     <div layout:fragment="content">
-      <div class="bg-dark text-white p-5">
-        <h1 class="text-center">상품 목록</h1>
-      </div>
+      <div class="container-fluid">
+        <div class="bg-dark text-white p-5">
+          <h1 class="text-center">상품 목록</h1>
+        </div>
+        <div class="form-container">
+          <form th:action="@{/inventory/product_list}" method="get">
+            <div class="form-group">
+              <label for="type">타입</label>
+              <select name="type" id="type" class="form-select">
+                <option value="" th:selected="${requestDto.type == null}">선택 조건</option>
+                <option value="opt" th:selected="${requestDto.type == 'opt'}">옵션</option>
+                <option value="productName" th:selected="${requestDto.type == 'productName'}">상품명</option>
+                <option value="productCode" th:selected="${requestDto.type == 'productCode'}">상품코드</option>
+                <option value="components" th:selected="${requestDto.type == 'components'}">구성품</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="productName">키워드</label>
+              <input type="text" id="keyword" name="keyword" class="form-control" th:value="${requestDto.keyword}" />
+            </div>
+            <div class="form-group">
+              <label for="quantityStatusSelect">Quantity Status</label>
+              <select id="quantityStatusSelect" class="form-control" name="quantityStatusStr">
+                <option th:selected="${requestDto.quantityStatusStr ==  null}">전체</option>
+                <option th:value="원활" th:selected="${requestDto.quantityStatusStr == '원활'}">원활</option>
+                <option th:value="품절" th:selected="${requestDto.quantityStatusStr == '품절'}">품절</option>
+                <option th:value="부족" th:selected="${requestDto.quantityStatusStr == '부족'}">부족</option>
+                <option th:value="경고" th:selected="${requestDto.quantityStatusStr == '경고'}">경고</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary">검색</button>
+          </form>
+        </div>
 
-      <div class="table-responsive table-container">
-        <table class="table table-hover table-bordered">
-          <thead class="thead-dark text-nowrap">
-            <tr class="text-center">
-              <th scope="col">상품 PK</th>
-              <th scope="col">상품 코드</th>
-              <th scope="col">상품 이름</th>
-              <th scope="col">상품 옵션</th>
-              <th scope="col">온라인 판매 가능 여부</th>
-              <th scope="col">진행</th>
-              <th scope="col">상품번호(출하순)</th>
-              <th scope="col">구성품</th>
-              <th scope="col">추가 구매 옵션</th>
-              <th scope="col">비고</th>
-              <th scope="col">추가 내용</th>
-              <th scope="col">대표 이미지</th>
-              <th scope="col">카테고리</th>
-              <th scope="col">관리자</th>
-              <th scope="col">기준 재고 수</th>
-              <!-- <th scope="col">Brand ID</th> -->
-              <th scope="col">Brand Name</th>
-              <th scope="col">Brand Code</th>
-              <!-- <th scope="col">Company ID</th> -->
-              <th scope="col">Company Name</th>
-              <th scope="col">Company Code</th>
-              <!-- <th scope="col">Company Brand ID</th> -->
-              <!-- <th scope="col">Price ID</th> -->
-              <th scope="col">매입가</th>
-              <th scope="col">공급가</th>
-              <th scope="col">배송비(VAT 포함)</th>
-              <th scope="col">네이버 판매가</th>
-              <th scope="col">관세</th>
-              <th style="width: 30%">운임</th>
-            </tr>
-          </thead>
-          <tbody class="text-nowrap">
-            <tr th:each="product : ${products}" class="text-center">
-              <td th:text="${product.productId}"></td>
-              <td th:text="${product.productCode}"></td>
-              <td th:text="${product.productName}"></td>
+        <div class="table-responsive table-container">
+          <table class="table table-hover table-bordered">
+            <thead class="thead-dark text-nowrap">
+              <tr class="text-center">
+                <th scope="col">상품 PK</th>
+                <th scope="col">상품 코드</th>
+                <th scope="col">상품 이름</th>
+                <th scope="col">상품 옵션</th>
+                <th scope="col">온라인 판매 가능 여부</th>
+                <th scope="col">진행</th>
+                <th scope="col">상품번호(출하순)</th>
+                <th scope="col">구성품</th>
+                <th scope="col">추가 구매 옵션</th>
+                <th scope="col">비고</th>
+                <th scope="col">추가 내용</th>
+                <th scope="col">대표 이미지</th>
+                <th scope="col">카테고리</th>
+                <th scope="col">관리자</th>
+                <th scope="col">안전 재고 기준</th>
+                <th scope="col">위험 재고 기준</th>
+                <th scope="col">단종 여부</th>
+                <th scope="col">Brand Name</th>
+                <th scope="col">Brand Code</th>
+                <th scope="col">Company Name</th>
+                <th scope="col">Company Code</th>
+                <th scope="col">매입가</th>
+                <th scope="col">공급가</th>
+                <th scope="col">배송비(VAT 포함)</th>
+                <th scope="col">네이버 판매가</th>
+                <th scope="col">관세</th>
+                <th scope="col">운임</th>
+              </tr>
+            </thead>
+            <tbody class="text-nowrap" th:each="product : ${products.dtoList}">
+              <tr class="text-center">
+                <td th:text="${product.productId}"></td>
+                <td><a th:href="@{|/inventory/product_read?productCode=${product.productCode}}" th:text="${product.productCode}|"></a></td>
+                <td th:text="${product.productName}"></td>
+                <td th:text="${product.opt}"></td>
+                <td th:text="${product.onlineCase}"></td>
+                <td th:text="${product.quantityStatus}"></td>
+                <td th:text="${product.productNum}"></td>
+                <td th:text="${product.components}"></td>
+                <td th:text="${product.extraPurchaseOption}"></td>
+                <td th:text="${product.remarks}"></td>
+                <td th:text="${product.modifyContent}"></td>
+                <td><img th:src="${product.mainImage}" alt="Main Image" width="50" /></td>
+                <td th:text="${product.category}"></td>
+                <td th:text="${product.manager}"></td>
+                <td th:text="${product.threshold}"></td>
+                <td th:text="${product.threshold2}"></td>
+                <td th:text="${product.soldOut}"></td>
+                <td th:text="${product.brandName}"></td>
+                <td th:text="${product.brandCode}"></td>
+                <td th:text="${product.companyName}"></td>
+                <td th:text="${product.companyCode}"></td>
+                <td th:text="${product.purchaseCost}"></td>
+                <td th:text="${product.supplyPrice}"></td>
+                <td th:text="${product.deliveryPrice}"></td>
+                <td th:text="${product.naverPrice}"></td>
+                <td th:text="${product.duty}"></td>
+                <td th:text="${product.shippingCost}"></td>
+              </tr>
+            </tbody>
+          </table>
+          <form th:action="@{/inventory/product_list}" method="get" class="select-container">
+            <nav aria-label="Page navigation">
+              <ul class="pagination">
+                <li class="page-item" th:classappend="${products.page == 1} ? 'disabled'">
+                  <a
+                    class="page-link"
+                    th:href="@{|/inventory/product_list?page=${products.page - 1}&size=${products.size}&status=${selectedQuantityStatus}|}"
+                    >Previous</a
+                  >
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(1, products.totalPage)}" th:classappend="${products.page == i} ? 'active'">
+                  <a
+                    class="page-link"
+                    th:text="${i}"
+                    th:href="@{|/inventory/product_list?page=${i}&size=${products.size}&status=${selectedQuantityStatus}|}"
+                    >1</a
+                  >
+                </li>
+                <li class="page-item" th:classappend="${products.page == products.totalPage} ? 'disabled'">
+                  <a
+                    class="page-link"
+                    th:href="@{|/inventory/product_list?page=${products.page + 1}&size=${products.size}&status=${selectedQuantityStatus}|}"
+                    >Next</a
+                  >
+                </li>
+              </ul>
+            </nav>
 
-              <td th:text="${product.productOption}"></td>
-              <td th:text="${product.onlineCase}"></td>
-              <td th:text="${product.quantityStatus}"></td>
-
-              <td th:text="${product.productNum}"></td>
-              <td th:text="${product.components}"></td>
-              <td th:text="${product.extraPurchaseOption}"></td>
-              <td th:text="${product.remarks}"></td>
-              <td th:text="${product.modifyContent}"></td>
-              <td><img th:src="${product.mainImage}" alt="Main Image" width="50" /></td>
-              <td th:text="${product.category}"></td>
-              <td th:text="${product.manager}"></td>
-              <td th:text="${product.threshold}"></td>
-              <!-- <td th:text="${product.brandId}"></td> -->
-              <td th:text="${product.brandName}"></td>
-              <td th:text="${product.brandCode}"></td>
-              <!-- <td th:text="${product.companyId}"></td> -->
-              <td th:text="${product.companyName}"></td>
-              <td th:text="${product.companyCode}"></td>
-              <!-- <td th:text="${product.companyBrandId}"></td> -->
-              <!-- <td th:text="${product.priceId}"></td> -->
-              <td th:text="${#numbers.formatDecimal(product.purchaseCost, 0, 'COMMA', 0, 'POINT')}" class="text-end"></td>
-              <td th:text="${#numbers.formatDecimal(product.supplyPrice, 0, 'COMMA', 0, 'POINT')}" class="text-end"></td>
-              <td th:text="${#numbers.formatDecimal(product.deliveryPrice, 0, 'COMMA', 0, 'POINT')}" class="text-end"></td>
-              <td th:text="${#numbers.formatDecimal(product.naverPrice, 0, 'COMMA', 0, 'POINT')}" class="text-end"></td>
-              <td th:text="${#numbers.formatDecimal(product.duty, 0, 'COMMA', 0, 'POINT')}" class="text-end"></td>
-              <td th:text="${#numbers.formatDecimal(product.shippingCost, 0, 'COMMA', 0, 'POINT')}" class="text-end"></td>
-            </tr>
-          </tbody>
-        </table>
+            <!-- <button type="submit" class="btn btn-primary">Apply</button> -->
+          </form>
+        </div>
       </div>
     </div>
 

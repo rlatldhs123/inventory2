@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/layout}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Registration</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.3/css/bootstrap.min.css" />
+    <style>
+      body {
+        background-color: #f8f9fa;
+      }
+      .container {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      .form-label {
+        font-weight: bold;
+      }
+      .form-control,
+      .form-select {
+        border-radius: 8px;
+      }
+      .form-control:hover {
+        background-color: #d4edda !important;
+        transform: scale(1.005);
+        box-shadow: 0 8px 8px rgba(5, 231, 194, 0.2);
+        z-index: 1;
+        position: relative;
+        border-radius: 8px;
+        transition: 0.4s;
+      }
+      .form-control:focus,
+      .form-select:focus {
+        box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+      }
+      .btn {
+        padding: 15px 25px;
+        font-size: 1.1rem;
+      }
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 123, 255, 0.2);
+      }
+    </style>
+  </head>
+
+  <div layout:fragment="content" class="container mt-5">
+    <!--  컨텐츠 영역 -->
+    <h1 class="mb-4">상품 등록</h1>
+
+    <form method="post" th:action="@{/inventory/create_post}">
+      <!-- 상품코드 -->
+      <div class="mb-3">
+        <label for="productCode" class="form-label">상품코드</label>
+        <input type="text" class="form-control" id="productCode" name="productCode" placeholder="상품 코드" required />
+      </div>
+      <!-- 상품 옵션 -->
+      <div class="mb-3">
+        <label for="opt" class="form-label">옵션</label>
+        <input type="text" class="form-control" id="opt" name="opt" placeholder="상품 옵션" required />
+      </div>
+      <!-- 상품 번호 -->
+      <div class="mb-3">
+        <label for="productNum" class="form-label">상품 번호</label>
+        <input type="text" class="form-control" id="productNum" name="productNum" placeholder="상품 번호" />
+      </div>
+      <!-- 상품이름 -->
+      <div class="mb-3">
+        <label for="productName" class="form-label">상품이름</label>
+        <input type="text" class="form-control" id="productName" name="productName" placeholder="상품 이름" required />
+      </div>
+      <!-- 구성품 -->
+      <div class="mb-3">
+        <label for="components" class="form-label">구성품</label>
+        <input type="text" class="form-control" id="components" name="components" placeholder="구성품" />
+      </div>
+      <!-- 추가 구매 옵션 -->
+      <div class="mb-3">
+        <label for="extraPurchaseOption" class="form-label">추가 구매 옵션</label>
+        <input type="text" class="form-control" id="extraPurchaseOption" name="extraPurchaseOption" placeholder="추가 구매 옵션" />
+      </div>
+      <!-- 비고 -->
+      <div class="mb-3">
+        <label for="remarks" class="form-label">비고</label>
+        <input type="text" class="form-control" id="remarks" name="remarks" placeholder="비고" />
+      </div>
+      <!-- 추가 내용 -->
+      <div class="mb-3">
+        <label for="modifyContent" class="form-label">추가 내용</label>
+        <input type="text" class="form-control" id="modifyContent" name="modifyContent" placeholder="추가 내용" required />
+      </div>
+      <!-- 대표 이미지 -->
+      <div class="mb-3">
+        <label for="mainImage" class="form-label">호스팅중인 대표 이미지 url 입력</label>
+        <input type="text" class="form-control" id="mainImage" name="mainImage" placeholder="대표 이미지" />
+      </div>
+      <!-- 온라인 판매 가능 여부 -->
+      <div class="mb-3">
+        <label for="onlineCase" class="form-label">온라인 판매 가능 여부</label>
+        <select class="form-select" id="onlineCase" name="onlineCase" required>
+          <option value="가능">가능</option>
+          <option value="불가능">불가능</option>
+        </select>
+      </div>
+      <!-- 카테고리 -->
+      <div class="mb-3">
+        <label for="category" class="form-label">카테고리</label>
+        <select class="form-select" id="category" name="category" required>
+          <option value="가구_인테리어">가구/인테리어</option>
+          <option value="도서">도서</option>
+          <option value="디지털_가전">디지털/가전</option>
+          <option value="생활_주방">생활/주방</option>
+          <option value="스포츠_레저">스포츠/레저</option>
+          <option value="식품">식품</option>
+          <option value="여행_문화">여행/문화</option>
+          <option value="출산_육아">출산/육아</option>
+          <option value="패션의류">패션의류</option>
+          <option value="패션_잡화">패션/잡화</option>
+          <option value="화장품_미용">화장품/미용</option>
+          <option value="건강">건강</option>
+          <option value="기타">기타</option>
+          <option value="구성품">구성품</option>
+        </select>
+      </div>
+      <!-- 관리자 -->
+      <div class="mb-3">
+        <label for="manager" class="form-label">관리자(미완성) 관리자 입력 오타시 기능오류!</label>
+        <input type="text" class="form-control" id="manager" name="manager" placeholder="관리자" />
+      </div>
+      <!-- 안전 재고 수 -->
+      <div class="mb-3">
+        <label for="threshold" class="form-label">안전 재고 수</label>
+        <input type="number" class="form-control" id="threshold" name="threshold" />
+      </div>
+      <!-- 위험 재고 수 -->
+      <div class="mb-3">
+        <label for="threshold2" class="form-label">위험 재고 수</label>
+        <input type="number" class="form-control" id="threshold2" name="threshold2" />
+      </div>
+
+      <!-- 수량 상태 -->
+      <div class="mb-3">
+        <label for="quantitytatus" class="form-label">수량 상태 (변동 가능 )</label>
+        <select class="form-select" id="quantityStatus" name="quantityStatus">
+          <option value="원활">원활</option>
+          <option value="품절">품절</option>
+          <option value="부족">부족</option>
+          <option value="경고">경고</option>
+        </select>
+      </div>
+
+      <!-- 가격 정보 -->
+      <!-- 매입가 -->
+
+      <div class="mb-3">
+        <label for="purchaseCost" class="form-label">매입가</label>
+        <input type="number" class="form-control" id="purchaseCost" name="purchaseCost" placeholder="매입가" required />
+      </div>
+      <!-- 공급가 -->
+      <div class="mb-3">
+        <label for="supplyPrice" class="form-label">공급가</label>
+        <input type="number" class="form-control" id="supplyPrice" name="supplyPrice" placeholder="공급가" />
+      </div>
+      <!-- 배송비 -->
+      <div class="mb-3">
+        <label for="deliveryPrice" class="form-label">배송비(VAT 포함)</label>
+        <input type="number" class="form-control" id="deliveryPrice" name="deliveryPrice" placeholder="배송비(VAT 포함)" />
+      </div>
+      <!-- 네이버 판매가 -->
+      <div class="mb-3">
+        <label for="naverPrice" class="form-label">네이버 판매가</label>
+        <input type="number" class="form-control" id="naverPrice" name="naverPrice" placeholder="네이버 판매가" />
+      </div>
+      <!-- 관세 -->
+      <div class="mb-3">
+        <label for="duty" class="form-label">관세</label>
+        <input type="number" class="form-control" id="duty" name="duty" placeholder="관세" />
+      </div>
+      <!-- 운임 -->
+      <div class="mb-3">
+        <label for="shippingCost" class="form-label">운임</label>
+        <input type="number" class="form-control" id="shippingCost" name="shippingCost" placeholder="운임" />
+      </div>
+
+      <!-- private String companyName;
+      private String brandName;
+      private String brandCode;
+      private String companyCode; -->
+
+      <!-- 업체명 -->
+      <div class="mb-3">
+        <label for="companyName" class="form-label">업체명</label>
+        <select class="form-select" id="quantitytatus" name="companyName">
+          <option th:each="c : ${companyList}" th:value="${c.companyName}" th:text="${c.companyName}"></option>
+        </select>
+      </div>
+      <!-- 업체코드 -->
+      <div class="mb-3">
+        <label for="companyCode" class="form-label">업체코드</label>
+        <select class="form-select" id="quantitytatus" name="companyCode">
+          <option th:each="c : ${companyList}" th:value="${c.companyCode}" th:text="${c.companyCode}"></option>
+        </select>
+      </div>
+      <!-- 브랜드명 -->
+      <div class="mb-3">
+        <label for="brandName" class="form-label">브랜드명</label>
+        <select class="form-select" id="quantitytatus" name="brandName">
+          <option th:each="b : ${brandList}" th:value="${b.brandName}" th:text="${b.brandName}"></option>
+        </select>
+      </div>
+      <!-- 브랜드 코드 -->
+      <div class="mb-3">
+        <label for="brandCode" class="form-label">브랜드코드</label>
+        <select class="form-select" id="quantitytatus" name="brandCode">
+          <option th:each="b : ${brandList}" th:value="${b.brandCode}" th:text="${b.brandCode}"></option>
+        </select>
+      </div>
+      <!-- 버튼 -->
+      <div class="mt-4 d-flex justify-content-between">
+        <button type="submit" class="btn btn-primary">등록</button>
+        <button type="reset" class="btn btn-secondary">취소</button>
+        <a href="/inventory/product_list" class="btn btn-outline-secondary">홈</a>
+      </div>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</html>

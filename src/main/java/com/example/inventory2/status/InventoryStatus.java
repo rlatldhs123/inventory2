@@ -9,4 +9,5 @@ public enum InventoryStatus {
   분실,
   훼손,
   폐기,
+  출고대기,
 }

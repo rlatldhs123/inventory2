@@ -14,4 +14,6 @@ public class CompanyBrandDTO {
   private Long companyBrandId;
   private String companyName;
   private String brandName;
+  private String brandCode;
+  private String companyCode;
 }

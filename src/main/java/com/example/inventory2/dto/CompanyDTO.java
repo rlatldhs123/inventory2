@@ -14,4 +14,9 @@ public class CompanyDTO {
   private Long companyId;
   private String companyName;
   private String companyCode;
+
+  public CompanyDTO(ProductDTO productDTO) {
+    this.companyName = productDTO.getCompanyName();
+    this.companyCode = productDTO.getCompanyCode();
+  }
 }
