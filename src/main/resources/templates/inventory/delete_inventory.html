@@ -1,15 +1,44 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/layout}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/layout}">
   <head>
     <meta charset="UTF-8" />
-    <title>인벤토리 리스트</title>
+    <title>Move List</title>
     <link rel="stylesheet" th:href="@{/css/home.css}" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
     <style>
-      .table-container .table-hover tbody tr:hover {
-        background-color: #f1f1f1;
-        transform: translateY(-5px);
-        transition: transform 0.2s ease, background-color 0.2s ease;
+      .text-nowrap {
+        white-space: nowrap;
+      }
+      .table-hover tbody tr {
+        transition: all 0.3s ease;
+      }
+      .table-hover tbody tr:hover {
+        background-color: #d4edda !important;
+        transform: scale(1.005);
+        box-shadow: 0 8px 8px rgba(5, 231, 194, 0.2);
+        z-index: 1;
+        position: relative;
+        border-radius: 8px;
+      }
+      .container-fluid,
+      .container-sm,
+      .container-md,
+      .container-lg,
+      .container-xl {
+        width: 100%;
+        padding-right: 1.75rem;
+        padding-left: 1.75rem;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      .checkbox-container {
+        display: flex;
+        align-items: center;
+      }
+      .checkbox-container input[type="checkbox"] {
+        transform: scale(2); /* 체크박스 크기를 2배로 키움 */
+        margin-right: 10px;
       }
     </style>
   </head>
@@ -17,47 +46,99 @@
     <div layout:fragment="content">
       <div class="container-fluid">
         <div class="bg-dark text-white p-5">
-          <h2 class="text-center">인벤토리 리스트</h2>
+          <h1 class="text-center">재고 페기(주문 시스템 구현 전)</h1>
         </div>
-        <div class="my-3">
-          <form action="" method="get" id="searchForm">
-            <input type="text" id="productName" placeholder="상품명 검색" name="productName" />
-            <input type="text" id="productCode" placeholder="상품 코드 검색" name="productCode" />
-            <button type="submit">검색</button>
-          </form>
-        </div>
-        <div class="table-responsive table-container">
-          <table class="table table-hover table-bordered">
-            <thead class="thead-dark text-nowrap">
-              <tr class="text-center">
-                <th scope="col"><input type="checkbox" onclick="selectAllCheckboxes(this)" /></th>
-                <th scope="col">상태</th>
-                <th scope="col">수량</th>
-                <th scope="col">상품명</th>
-                <th scope="col">옵션명</th>
-                <th scope="col">상품 코드</th>
-                <th scope="col">창고 이름</th>
-              </tr>
-            </thead>
-            <tbody class="text-nowrap" id="inventoryTable">
-              <tr class="text-center hover" th:each="item : ${inventoryList}">
-                <td><input type="checkbox" class="delete-checkbox" data-id="[[${item.inventoryId}]]" /></td>
-                <td th:text="${item.inventoryStatus}"></td>
-                <td th:text="${item.quantity}"></td>
-                <td th:text="${item.productName}"></td>
-                <td th:text="${item.opt}"></td>
-                <td th:text="${item.productCode}"></td>
-                <td th:text="${item.warehouseName}"></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <button onclick="deleteSelected()">삭제</button>
+
+        <form id="allForm">
+          <!-- 숨겨진 필드를 추가하여 기본값으로 빈 리스트를 전달합니다. -->
+          <input type="hidden" name="productIds" value="" id="hiddenProductIds" />
+
+          <div class="text-center">
+            <button type="submit" class="btn btn-danger mb-3" id="moveButton">재고 폐기</button>
+          </div>
+
+          <div class="table-responsive table-container">
+            <table class="table table-hover table-bordered">
+              <thead class="thead-dark text-nowrap">
+                <tr class="text-center">
+                  <th scope="col">선택</th>
+                  <th scope="col">PK(테스트)</th>
+                  <th scope="col">상품 코드</th>
+                  <th scope="col">상품 이름</th>
+                  <th scope="col">상품 옵션</th>
+                  <th scope="col">현 창고위치</th>
+                  <th scope="col">상태</th>
+                  <th scope="col">수량</th>
+                </tr>
+              </thead>
+              <tbody class="text-nowrap">
+                <tr class="text-center" th:each="product, prodStat : ${inventoryList.dtoList}">
+                  <td>
+                    <div class="checkbox-container">
+                      <input type="checkbox" th:name="productIds" th:value="${product.productCode}" id="checkbox_${prodStat.index}" />
+                    </div>
+                  </td>
+                  <td th:text="${product.inventoryId}" id="inventoryId_${prodStat.index}" name="inventoryId"></td>
+
+                  <td th:text="${product.productCode}" id="productCode_${prodStat.index}" name="productCode"></td>
+                  <td th:text="${product.productName}" id="productName_${prodStat.index}" name="productName"></td>
+                  <td th:text="${product.opt}" id="productOpt_${prodStat.index}" name="opt"></td>
+                  <td>
+                    <input
+                      type="text"
+                      class="form-control"
+                      th:value="${product.warehouseName}"
+                      readonly
+                      id="fromWarehouse_${prodStat.index}"
+                      name="warehouseName"
+                    />
+                  </td>
+                  <td>
+                    <select class="form-control text text-center" name="inventoryStatus" id="status_${prodStat.index}">
+                      <option
+                        value="product.inventoryStatus"
+                        th:selected="${inventoryStatus == 'product.inventoryStatus'}"
+                        th:text="${product.inventoryStatus}"
+                      ></option>
+                      <option value="입고">입고</option>
+                      <option value="출고대기">출고 대기</option>
+                      <option value="교환">교환</option>
+                      <option value="회송">회송</option>
+                      <option value="반품">반품</option>
+                      <option value="분실">분실</option>
+                      <option value="훼손">훼손</option>
+                    </select>
+                  </td>
+                  <td style="width: 20px">
+                    <input type="text" th:value="${product.quantity}" name="quantity" readonly size="5" />
+                  </td>
+                  <!-- <td>
+                    <select class="form-control" name="toWarehouse" id="toWarehouse_${prodStat.index}">
+                      <option th:each="warehouse : ${warehouses}" th:value="${warehouse.warehouseName}" th:text="${warehouse.warehouseName}"></option>
+                    </select>
+                  </td>  -->
+                </tr>
+              </tbody>
+            </table>
+            <div class="text-center">
+              <button type="submit" class="btn btn-primary" id="submitMoveButton">이동 하기</button>
+            </div>
+          </div>
+        </form>
       </div>
+
+      <form th:action="@{/inventory/move}" id="moveForm" method="post">
+        <!-- check 된 요소 append 후 보내기 -->
+        <!-- <input type="hidden" name="invetoryList[0].inventoryId" value="" />
+        <input type="hidden" name="invetoryList[0].inventoryStatus" value="" />
+        <input type="hidden" name="invetoryList[0].warehouseName" value="" />
+        <input type="hidden" name="invetoryList[0].quantity" value="" /> -->
+      </form>
     </div>
 
     <th:block layout:fragment="js">
-      <script th:src="@{/js/inventory.js}"></script>
+      <script th:src="@{/js/home.js}"></script>
+      <script th:src="@{/js/move.js}"></script>
     </th:block>
   </body>
 </html>

@@ -199,6 +199,7 @@ public interface ProductService {
         .deliveryPrice(price.getDeliveryPrice())
         .naverPrice(price.getNaverPrice())
         .shippingCost(price.getShippingCost())
+        .purchaseCost(price.getPurchaseCost())
         .duty(price.getDuty())
 
         .companyName(companyBrand.getCompany().getCompanyName())

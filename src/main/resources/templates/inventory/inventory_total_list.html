@@ -47,7 +47,11 @@
         background-color: #0056b3;
         transform: scale(1.05);
       }
-      .form-control:hover {
+
+      .fixed-size-image {
+        width: 50px !important; /* 원하는 고정 너비 */
+        height: 50px !important; /* 원하는 고정 높이 */
+        object-fit: cover !important; /* 이미지를 고정된 크기에 맞게 조정 */
       }
     </style>
   </head>
@@ -112,7 +116,9 @@
                 <td th:text="${item.productCode}"></td>
                 <td th:text="${item.productName}"></td>
                 <td th:text="${item.opt}"></td>
-                <td><img th:src="@{${item.mainImage}}" alt="대표 이미지" width="50" /></td>
+                <td>
+                  <img th:src="${item.mainImage != null ? item.mainImage : '@{/이미지/대표이미지 x .webp}'}" class="fixed-size-image" />
+                </td>
                 <td th:text="${item.totalQuantity}"></td>
                 <td th:text="${#numbers.formatCurrency(item.purchaseCost)}"></td>
                 <td th:text="${#numbers.formatCurrency(item.purchaseCost * item.totalQuantity)}"></td>

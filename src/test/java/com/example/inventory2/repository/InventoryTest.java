@@ -252,7 +252,7 @@ public class InventoryTest {
         .page(1)
         .type("opt")
         .build();
-    PageResultDto<InventoryDTO, Inventory> moves = inventoryService.getInventoryList(
+    PageResultDto<InventoryDTO, Object[]> moves = inventoryService.getInventoryList(
         page);
   }
 }

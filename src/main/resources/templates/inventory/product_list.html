@@ -31,6 +31,37 @@
         margin-right: auto;
         margin-left: auto;
       }
+
+      /* 상태에 따른 배경색 설정 */
+      .status-원활 {
+        background-color: #14812d !important; /* 초록색 */
+        color: white !important;
+      }
+      .status-부족 {
+        background-color: #ffeb3b !important; /* 노란색 */
+        color: black !important;
+      }
+      .status-경고 {
+        background-color: #ff9800 !important; /* 주황색 */
+        color: white !important;
+      }
+      .status-품절 {
+        background-color: #f44336 !important; /* 빨간색 */
+        color: white !important;
+      }
+
+      .fixed-size-image {
+        width: 50px; /* 원하는 고정 너비 */
+        height: 50px; /* 원하는 고정 높이 */
+        object-fit: cover; /* 이미지를 고정된 크기에 맞게 조정 */
+      }
+
+      .rounded-image {
+        border-radius: 50%;
+        width: 70px; /* 고정된 너비 */
+        height: 70px; /* 고정된 높이 */
+        object-fit: cover; /* 이미지를 고정된 크기에 맞게 조정 */
+      }
     </style>
   </head>
   <body>
@@ -39,13 +70,14 @@
         <div class="bg-dark text-white p-5">
           <h1 class="text-center">상품 목록</h1>
         </div>
+
         <div class="form-container">
           <form th:action="@{/inventory/product_list}" method="get">
             <div class="form-group">
               <label for="type">타입</label>
               <select name="type" id="type" class="form-select">
                 <option value="" th:selected="${requestDto.type == null}">선택 조건</option>
-                <option value="opt" th:selected="${requestDto.type == 'opt'}">옵션</option>
+                <!-- <option value="opt" th:selected="${requestDto.type == 'opt'}">옵션</option> -->
                 <option value="productName" th:selected="${requestDto.type == 'productName'}">상품명</option>
                 <option value="productCode" th:selected="${requestDto.type == 'productCode'}">상품코드</option>
                 <option value="components" th:selected="${requestDto.type == 'components'}">구성품</option>
@@ -85,6 +117,7 @@
                 <th scope="col">비고</th>
                 <th scope="col">추가 내용</th>
                 <th scope="col">대표 이미지</th>
+                <th scope="col">로켓배송</th>
                 <th scope="col">카테고리</th>
                 <th scope="col">관리자</th>
                 <th scope="col">안전 재고 기준</th>
@@ -109,13 +142,25 @@
                 <td th:text="${product.productName}"></td>
                 <td th:text="${product.opt}"></td>
                 <td th:text="${product.onlineCase}"></td>
-                <td th:text="${product.quantityStatus}"></td>
+
+                <td th:text="${product.quantityStatus}" th:classappend="'status-' + ${product.quantityStatus}"></td>
+
                 <td th:text="${product.productNum}"></td>
                 <td th:text="${product.components}"></td>
                 <td th:text="${product.extraPurchaseOption}"></td>
                 <td th:text="${product.remarks}"></td>
                 <td th:text="${product.modifyContent}"></td>
-                <td><img th:src="${product.mainImage}" alt="Main Image" width="50" /></td>
+                <td>
+                  <a href="https://jishop.co.kr/product/detail.html?product_no=125&cate_no=1&display_group=2">
+                    <img th:src="${product.mainImage != null ? product.mainImage : '@{/이미지/대표이미지 x .webp}'}" class="fixed-size-image" />
+                  </a>
+                </td>
+                <td>
+                  <a href="https://www.coupang.com/np/search?component=&q=%ED%94%8C%EB%9D%BC%EC%9D%B4%ED%86%A0&channel=user">
+                    <img src="/이미지/로켓 로고.jpg" class="rounded-image" />
+                  </a>
+                </td>
+
                 <td th:text="${product.category}"></td>
                 <td th:text="${product.manager}"></td>
                 <td th:text="${product.threshold}"></td>
@@ -125,12 +170,12 @@
                 <td th:text="${product.brandCode}"></td>
                 <td th:text="${product.companyName}"></td>
                 <td th:text="${product.companyCode}"></td>
-                <td th:text="${product.purchaseCost}"></td>
-                <td th:text="${product.supplyPrice}"></td>
-                <td th:text="${product.deliveryPrice}"></td>
-                <td th:text="${product.naverPrice}"></td>
-                <td th:text="${product.duty}"></td>
-                <td th:text="${product.shippingCost}"></td>
+                <td th:text="${#numbers.formatCurrency(product.purchaseCost)}"></td>
+                <td th:text="${#numbers.formatCurrency(product.supplyPrice)}"></td>
+                <td th:text="${#numbers.formatCurrency(product.deliveryPrice)}"></td>
+                <td th:text="${#numbers.formatCurrency(product.naverPrice)}"></td>
+                <td th:text="${#numbers.formatCurrency(product.duty)}"></td>
+                <td th:text="${#numbers.formatCurrency(product.shippingCost)}"></td>
               </tr>
             </tbody>
           </table>
@@ -140,7 +185,7 @@
                 <li class="page-item" th:classappend="${products.page == 1} ? 'disabled'">
                   <a
                     class="page-link"
-                    th:href="@{|/inventory/product_list?page=${products.page - 1}&size=${products.size}&status=${selectedQuantityStatus}|}"
+                    th:href="@{|/inventory/product_list?page=${products.page - 1}&size=${products.size}&status=${selectedQuantityStatus}&type=${requestDto.type}&keyword=${requestDto.keyword}&quantityStatusStr=${requestDto.quantityStatusStr}|}"
                     >Previous</a
                   >
                 </li>
@@ -148,14 +193,14 @@
                   <a
                     class="page-link"
                     th:text="${i}"
-                    th:href="@{|/inventory/product_list?page=${i}&size=${products.size}&status=${selectedQuantityStatus}|}"
+                    th:href="@{|/inventory/product_list?page=${i}&size=${products.size}&status=${selectedQuantityStatus}&type=${requestDto.type}&keyword=${requestDto.keyword}&quantityStatusStr=${requestDto.quantityStatusStr}|}"
                     >1</a
                   >
                 </li>
                 <li class="page-item" th:classappend="${products.page == products.totalPage} ? 'disabled'">
                   <a
                     class="page-link"
-                    th:href="@{|/inventory/product_list?page=${products.page + 1}&size=${products.size}&status=${selectedQuantityStatus}|}"
+                    th:href="@{|/inventory/product_list?page=${products.page + 1}&size=${products.size}&status=${selectedQuantityStatus}&type=${requestDto.type}&keyword=${requestDto.keyword}&quantityStatusStr=${requestDto.quantityStatusStr}|}"
                     >Next</a
                   >
                 </li>

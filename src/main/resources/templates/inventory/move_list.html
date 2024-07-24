@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/layout}">
   <head>
     <meta charset="UTF-8" />
-    <title>Move List</title>
+    <title></title>
     <link rel="stylesheet" th:href="@{/css/home.css}" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
     <style>
@@ -46,7 +46,55 @@
     <div layout:fragment="content">
       <div class="container-fluid">
         <div class="bg-dark text-white p-5">
-          <h1 class="text-center">창고 이동 하기</h1>
+          <h1 class="text-center">창고이동 및 상태변경</h1>
+        </div>
+
+        <div class="form-container">
+          <form th:action="@{/inventory/move_list}" method="get">
+            <div class="form-group">
+              <label for="type">타입</label>
+              <select name="type" id="type" class="form-select">
+                <option value="" th:selected="${requestDto.type == null}">선택 조건</option>
+                <option value="productCode" th:selected="${requestDto.type == 'productCode'}">상품코드</option>
+                <option value="productName" th:selected="${requestDto.type == 'productName'}">상품명</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="productName">키워드</label>
+              <input type="text" id="keyword" name="keyword" class="form-control" th:value="${requestDto.keyword}" />
+            </div>
+            <div class="form-group">
+              <label for="inventoryStatusSelect">Inventory Status</label>
+              <select id="inventoryStatusSelect" class="form-control" name="inventoryStatusStr">
+                <option th:selected="${selectedQuantityStatus == null}">전체</option>
+                <option th:value="입고" th:selected="${requestDto.inventoryStatusStr == '입고'}">입고</option>
+                <option th:value="출고" th:selected="${requestDto.inventoryStatusStr == '출고'}">출고</option>
+                <option th:value="교환" th:selected="${requestDto.inventoryStatusStr == '교환'}">교환</option>
+                <option th:value="회송" th:selected="${requestDto.inventoryStatusStr == '회송'}">회송</option>
+                <option th:value="반품" th:selected="${requestDto.inventoryStatusStr == '반품'}">반품</option>
+                <option th:value="분실" th:selected="${requestDto.inventoryStatusStr == '분실'}">분실</option>
+                <option th:value="훼손" th:selected="${requestDto.inventoryStatusStr == '훼손'}">훼손</option>
+                <option th:value="폐기" th:selected="${requestDto.inventoryStatusStr == '폐기'}">폐기</option>
+                <option th:value="출고대기" th:selected="${requestDto.inventoryStatusStr == '출고대기'}">출고대기</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="warehouseName">warehouseName</label>
+              <select id="warehouseName" class="form-control" name="warehouseName" th:value="${warehouseName}">
+                <option value="" th:selected="${requestDto.warehouseName == null}">전체</option>
+                <option th:value="WAREHOUSE_101" th:selected="${requestDto.warehouseName == 'WAREHOUSE_101'}">WAREHOUSE_101</option>
+                <option th:value="WAREHOUSE_102" th:selected="${requestDto.warehouseName == 'WAREHOUSE_102'}">WAREHOUSE_102</option>
+                <option th:value="WAREHOUSE_103" th:selected="${requestDto.warehouseName == 'WAREHOUSE_103'}">WAREHOUSE_103</option>
+                <option th:value="WAREHOUSE_104" th:selected="${requestDto.warehouseName == 'WAREHOUSE_104'}">WAREHOUSE_104</option>
+                <option th:value="WAREHOUSE_105" th:selected="${requestDto.warehouseName == 'WAREHOUSE_105'}">WAREHOUSE_105</option>
+                <option th:value="WAREHOUSE_106" th:selected="${requestDto.warehouseName == 'WAREHOUSE_106'}">WAREHOUSE_106</option>
+                <option th:value="WAREHOUSE_107" th:selected="${requestDto.warehouseName == 'WAREHOUSE_107'}">WAREHOUSE_107</option>
+                <option th:value="WAREHOUSE_108" th:selected="${requestDto.warehouseName == 'WAREHOUSE_108'}">WAREHOUSE_108</option>
+                <option th:value="WAREHOUSE_109" th:selected="${requestDto.warehouseName == 'WAREHOUSE_109'}">WAREHOUSE_109</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary">검색</button>
+          </form>
         </div>
 
         <form id="allForm">
@@ -96,11 +144,7 @@
                   </td>
                   <td>
                     <select class="form-control text text-center" name="inventoryStatus" id="status_${prodStat.index}">
-                      <option
-                        value="product.inventoryStatus"
-                        th:selected="${inventoryStatus == 'product.inventoryStatus'}"
-                        th:text="${product.inventoryStatus}"
-                      ></option>
+                      <option th:value="${product.inventoryStatus}" th:text="${product.inventoryStatus}" th:selected="true"></option>
                       <option value="입고">입고</option>
                       <option value="출고대기">출고 대기</option>
                       <option value="교환">교환</option>
@@ -121,10 +165,36 @@
                 </tr>
               </tbody>
             </table>
-            <div class="text-center">
-              <button type="submit" class="btn btn-primary" id="submitMoveButton">이동 하기</button>
-            </div>
           </div>
+          <nav aria-label="Page navigation">
+            <ul class="pagination">
+              <li class="page-item" th:classappend="${moveList.page == 1} ? 'disabled'">
+                <a
+                  class="page-link"
+                  th:href="@{|/inventory/move_list?page=${moveList.page - 1}&size=${moveList.size}&type=${requestDto.type}&keyword=${requestDto.keyword}&inventoryStatusStr=${requestDto.inventoryStatusStr}&warehouseName=${requestDto.warehouseName}|}"
+                >
+                  Previous
+                </a>
+              </li>
+              <li class="page-item" th:each="i : ${#numbers.sequence(1, moveList.totalPage)}" th:classappend="${moveList.page == i} ? 'active'">
+                <a
+                  class="page-link"
+                  th:text="${i}"
+                  th:href="@{|/inventory/move_list?page=${i}&size=${moveList.size}&type=${requestDto.type}&keyword=${requestDto.keyword}&inventoryStatusStr=${requestDto.inventoryStatusStr}&warehouseName=${requestDto.warehouseName}|}"
+                >
+                  1
+                </a>
+              </li>
+              <li class="page-item" th:classappend="${moveList.page == moveList.totalPage} ? 'disabled'">
+                <a
+                  class="page-link"
+                  th:href="@{|/inventory/move_list?page=${moveList.page + 1}&size=${moveList.size}&type=${requestDto.type}&keyword=${requestDto.keyword}&inventoryStatusStr=${requestDto.inventoryStatusStr}&warehouseName=${requestDto.warehouseName}|}"
+                >
+                  Next
+                </a>
+              </li>
+            </ul>
+          </nav>
         </form>
       </div>
 

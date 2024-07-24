@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface InventoryService {
   // 인벤토리 리스트 출력
-  PageResultDto<InventoryDTO, Inventory> getInventoryList(
+  PageResultDto<InventoryDTO, Object[]> getInventoryList(
       PageRequestDto pageRequestDto);
 
   // 리팩토링한 인벤토리 리스트 가져오기 수정중
@@ -32,7 +32,7 @@ public interface InventoryService {
   //
   List<InventoryDTO> getInventoriesByIds(List<Long> ids);
 
-  default InventoryDTO entityToDto(Inventory inventory) {
+  public default InventoryDTO entityToDto(Inventory inventory, Product product, Warehouse warehouse) {
     if (inventory == null) {
       return null;
     }

@@ -77,6 +77,9 @@ public class ProductCompanyBrandPriceRepositoryImpl
     if (type.contains("productName")) {
       conditionBuilder.or(product.productName.contains(keyword));
     }
+    if (type.contains("components")) {
+      conditionBuilder.or(product.components.contains(keyword));
+    }
 
     // quantityStatusStr이 빈 문자열인 경우 현재 조건들만 반환
     // if (quantityStatusStr.length() == 0) return builder;
@@ -106,11 +109,12 @@ public class ProductCompanyBrandPriceRepositoryImpl
 
       // quantityStatus 값이 null이 아닌 경우에만 조건을 추가
 
-      conditionBuilder.or(product.quantityStatus.eq(quantityStatus));
+      conditionBuilder.and(product.quantityStatus.eq(quantityStatus));
     }
 
     builder.and(conditionBuilder);
-    tuple.where(conditionBuilder);
+    // tuple.where(conditionBuilder);
+    tuple.where(builder);
 
     Sort sort = pageable.getSort();
     sort.stream().forEach(order -> {

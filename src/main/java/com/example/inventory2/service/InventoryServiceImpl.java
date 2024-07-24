@@ -82,7 +82,7 @@ public class InventoryServiceImpl implements InventoryService {
     return savedInventory.getInventoryId();
   }
 
-  // 수량에 따른 상태 체크 함수(재사용)
+  // 수량에 따른 상태 체크 함수(재사용) 현재 크리에이트 만 적용 추후 업데이트 폐기에도 적용
   private Product check(Product product, Inventory inventory) {
     // 상태 변화
     if (inventory.getQuantity() >= product.getThreshold()) {
@@ -139,13 +139,16 @@ public class InventoryServiceImpl implements InventoryService {
   }
 
   @Override
-  public PageResultDto<InventoryDTO, Inventory> getInventoryList(
+  public PageResultDto<InventoryDTO, Object[]> getInventoryList(
       PageRequestDto requestDto) {
-    Pageable pageable = requestDto.getPageable(
-        Sort.by("inventoryId").ascending());
-    BooleanBuilder builder = getSearch(requestDto);
-    Page<Inventory> result = inventoryRepository.findAll(builder, pageable);
-    Function<Inventory, InventoryDTO> fn = this::entityToDto;
+    Page<Object[]> result = inventoryRepository.getInventoryList(requestDto.getType(), requestDto.getKeyword(),
+        requestDto.getInventoryStatusStr(),
+        requestDto.getWarehouseName(),
+        requestDto.getPageable(Sort.by("inventoryId").descending()));
+
+    Function<Object[], InventoryDTO> fn = (en -> entityToDto((Inventory) en[0],
+        (Product) en[1], (Warehouse) en[2]));
+
     return new PageResultDto<>(result, fn);
   }
 

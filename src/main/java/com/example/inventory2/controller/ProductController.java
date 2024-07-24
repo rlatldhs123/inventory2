@@ -79,6 +79,8 @@ public class ProductController {
 
     PageResultDto<ProductDTO, Object[]> result = productService.getList(pageRequestDto);
 
+    log.info("리절트 확인 {}", result);
+
     model.addAttribute("products", result);
     // model.addAttribute("selectedQuantityStatus", status);
 
@@ -89,10 +91,9 @@ public class ProductController {
   @GetMapping("/move_list")
   public void move_list(
       Model model,
-      InventoryDTO inventoryDTO,
-      WarehouseDTO warehouseDTO,
-      PageRequestDto pageRequestDto) {
-    PageResultDto<InventoryDTO, Inventory> moves = inventoryService.getInventoryList(
+
+      @ModelAttribute("requestDto") PageRequestDto pageRequestDto) {
+    PageResultDto<InventoryDTO, Object[]> moves = inventoryService.getInventoryList(
         pageRequestDto);
     List<WarehouseDTO> warehouses = warehouseService.getAllWarehouses();
 
@@ -118,7 +119,6 @@ public class ProductController {
   // "fromWarehouse[" + productCode + "]"
   // );
 
-  // // 각 제품에 대해 status 파라미터를 조회합니다.
   // String status = allParams.get("status[" + productCode + "]");
 
   // // 각 제품에 대해 toWarehouse 파라미터를 조회합니다.
@@ -155,7 +155,7 @@ public class ProductController {
       @ModelAttribute("requestDto") PageRequestDto pageRequestDto,
       Model model,
       InventoryDTO inventoryDto) {
-    PageResultDto<InventoryDTO, Inventory> inventoryList = inventoryService.getInventoryList(
+    PageResultDto<InventoryDTO, Object[]> inventoryList = inventoryService.getInventoryList(
         pageRequestDto);
 
     model.addAttribute("inventoryList", inventoryList);
@@ -261,15 +261,14 @@ public class ProductController {
 
   @GetMapping("/delete_inventory")
   public void delete_inventory(
-      @RequestParam(defaultValue = "") String productCode,
-      @RequestParam(defaultValue = "") String productName,
+      @ModelAttribute("requestDto") PageRequestDto pageRequestDto,
+
       Model model) {
     log.info("재고 폐기 처분 {}");
 
-    List<InventoryDTO> inventories = inventoryService.searchInventories(
-        productCode,
-        productName);
-    model.addAttribute("inventoryList", inventories);
+    PageResultDto<InventoryDTO, Object[]> list = inventoryService.getInventoryList(pageRequestDto);
+
+    model.addAttribute("inventoryList", list);
   }
 
   @PostMapping("/delete")
